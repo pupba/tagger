@@ -1,6 +1,6 @@
 # 수동 Tagger
 ## demo
-<img src="./demo.png" width="auto"><br>
+<img src="./demo.webp" width="auto"><br>
 
 ## 실행
 - python3 설치
