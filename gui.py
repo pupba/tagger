@@ -13,11 +13,15 @@ class WebUI:
     def __init__(self,img_path:str="./inputs",save_path:str="./outputs",default_tag_path:str="./default.xlsx"):
         # img
         if not img_path.endswith("/"):
-            img_path+="/"
-        self.__imgs = [(Image.open(img_path+i),i) for i in os.listdir(img_path) if i!=".DS_Store" and (i.endswith(".jpg") or i.endswith(".png"))]
+            self.__img_path=img_path+"/"
+        else:
+            self.__img_path = img_path
+        self.__imgs = [(Image.open(self.__img_path+i),i) for i in os.listdir(self.__img_path) if i!=".DS_Store" and (i.endswith(".jpg") or i.endswith(".png"))]
         # output
         if not save_path.endswith("/"):
             self.__save_path=save_path+"/"
+        else:
+            self.__save_path = save_path
 
         df = pd.read_excel(default_tag_path)
         # default value
@@ -61,7 +65,9 @@ class WebUI:
             from modules.F2SDCap import F2SDCaptioner
             tags = F2SDCaptioner(image=image)()
             return tags
-
+    def __reaload(self):
+        imgs = [(Image.open(self.__img_path+i),i) for i in os.listdir(self.__img_path) if i!=".DS_Store" and (i.endswith(".jpg") or i.endswith(".png"))]
+        return imgs
     def __gui(self):
         # -------- GUI -----------
         with gr.Blocks(title="수동 Tagging",theme=small_and_pretty) as demo:
@@ -75,6 +81,8 @@ class WebUI:
                     with gr.Column() as r2c1:
                         image = gr.Image(None,format="png",width="100%",type="pil")
                     with gr.Column() as r2c2:
+                        reload = gr.Button("🌀 Image Reload..")
+                        reload.click(fn=self.__reaload,inputs=None,outputs=gallery)
                         genre = gr.Radio(self.__genre,value=self.__genre[0],label="장르")
                         character = gr.Radio(self.__character,value=self.__character[0],label="캐릭터")
                         style = gr.Radio(self.__style,value=self.__style[0],label="스타일")
