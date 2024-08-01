@@ -1,0 +1,8 @@
+gradio
+openpyxl
+pandas
+numpy
+pillow
+accelerate
+transformers
+optimum[onnxruntime]

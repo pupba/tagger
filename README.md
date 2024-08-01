@@ -1,6 +1,6 @@
 # 수동 Tagger
 ## demo
-<img src="./demo.png" width="auto"><br>
+<img src="./demo.webp" width="auto"><br>
 
 ## 실행
 - python3 설치
@@ -35,3 +35,10 @@
     -sp server-port      Gradio 서버 포트 (기본값: 7861)
     -s                   Gradio 서버 공유 모드 활성화 (기본값: False)
     ```
+
+### ✅ v0.1.2 Update
+- 실행전에 라이브러리 수정
+- `venv/lib/python3.11/site-packages/transformers/dynamic_module_utils.py`
+- 여기서 다음과 같이 수정(`input` 부분 주석 후 `answer = "yes"`)
+
+<img src="./fix.webp" width="auto"><br> 

@@ -49,7 +49,19 @@ class WebUI:
     def __imgSet(self,data:gr.SelectData):
         self.__filename = self.__imgs[data.index][1]
         return self.__imgs[data.index][0]
-        
+
+    def __tag_model(self,image:Image,tagger:str| None):
+        if tagger == None:
+            return ""
+        elif tagger == "wd-14":
+            from modules.wd14 import WD14Tagger
+            tags = WD14Tagger(image=image)()
+            return tags
+        elif tagger == "Florence-2-SD3-Captioner": # GPU 필요
+            from modules.F2SDCap import F2SDCaptioner
+            tags = F2SDCaptioner(image=image)()
+            return tags
+
     def __gui(self):
         # -------- GUI -----------
         with gr.Blocks(title="수동 Tagging",theme=small_and_pretty) as demo:
@@ -69,6 +81,15 @@ class WebUI:
                         cam_shot = gr.Radio(self.__cam_shot,value=self.__cam_shot[0],label="카메라 샷")
                         cam_move = gr.Radio(self.__cam_move,value=self.__cam_move[0],label="카메라 무빙")
                         add_tags = gr.Text(label="추가 프롬프트",placeholder="콤마로 구분해서 입력하세요. ex. shirt,bag,...")
+                        # tagger model
+                        import torch
+                        if torch.cuda.is_available():
+                            taggers = [None,"wd-14","Florence-2-SD3-Captioner"]
+                        else:
+                            taggers = [None,"wd-14"]
+                        tagger = gr.Radio(taggers)
+                        tag_btn = gr.Button("Use Model tagging")
+                        tag_btn.click(fn=self.__tag_model,inputs=[image,tagger],outputs=[add_tags])
                         # button
                         btn = gr.Button("Start Tagging!",variant="primary")
                 gallery.select(fn=self.__imgSet,inputs=None,outputs=[image])
